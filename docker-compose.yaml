@@ -1,0 +1,44 @@
+version: '3.8'
+services:
+  # Ini adalah konfigurasi untuk applikasi  nodejs
+  # Saat docker-compose up -d dieksekusi , konfigurasi akan dimulai secara otomatis
+  # Gunakan file Dockerfile untuk konfigurasi
+app:
+  build:
+  depends_on: 
+    # Aplikasi tidak bekerja tanpa database
+    # menggunakan postgres untuk dependency
+    - postgres
+  ports:
+    # ini adalah port forwarding dari komputer ke internal port docker
+    # disini menggunakan listen port 8080 yg di teruskan ke port 5000 milik jaringan docker
+    - 8080:5000
+  volumes: 
+    # Mounting project direktori ini  ke internal doker
+    # folder project ini ke docker /usr/src/app
+    - ./:/usr/src/app
+
+    - /usr/src/app/node_modules
+# Ini konfigurasi untuk postgress, untuk nama penting ini akan digunakan untuk jaringan internal
+postgres:
+  images: postgres:14.1-alpine
+  restart: always
+  environment:
+    POSTGRESS_USER: root
+    POSTGRESS_PASSWORD: password
+    POSTGRESS_DB: postgres
+  ports: 
+    # Port standar
+    - 5432:5432
+    - ./database-seed.sql:/docker-entrypoint-initdb.d/database-seed.sql
+
+ # PostgreSQL pgAdmin panel accessible at http://localhost:16543/
+pgadmin-compose:
+  image: dpage/pgadmin4
+  environment:
+    PGADMIN_DEFAULT_EMAIL: "placeholder@example.com"
+    PGADMIN_DEFAULT_PASSWORD: "fakepassword123!"
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres
