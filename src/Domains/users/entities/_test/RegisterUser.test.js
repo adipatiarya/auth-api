@@ -29,6 +29,16 @@ describe('a register user entities', () => {
       password: 'abc',
 
     };
+    // Act
     expect(() => new RegisterUser(payload)).toThrowError('REGISTER_USER.USERNAME_LIMIT_CHAR');
+  });
+  it('should throw error when username contains restricted characters', () => {
+    // Arange
+    const payload = {
+      username: 'Dico Ding',
+      fullname: 'dicodign',
+      password: 'abc',
+    };
+    expect(() => new RegisterUser(payload)).toThrowError('REGISTER_USER.USERNAME_CONTAIN_RESTRICTED_CHARACTER');
   });
 });
