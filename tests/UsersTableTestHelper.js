@@ -21,6 +21,10 @@ const UsersTableTestHelper = {
     const result = await pool.query(query);
     return result.rows;
   },
+
+  async cleanTable() {
+    await pool.query('TRUNCATE TABLE users');
+  },
 };
 
 module.exports = UsersTableTestHelper;
